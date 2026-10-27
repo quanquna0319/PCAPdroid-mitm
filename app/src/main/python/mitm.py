@@ -29,6 +29,7 @@ from mitmproxy.tools.main import mitmdump, process_options
 from mitmproxy.certs import CertStore, Cert
 from pcapdroid import PCAPdroid, AddonOpts
 from js_injector import JsInjector
+from magicbox_member import MagicBoxMember
 from pathlib import Path
 import traceback
 import socket
@@ -138,6 +139,15 @@ def run(fd: int, jenabled_addons, addons_home: str, dump_client: bool,
 
                 # Load addons (order is important)
                 master.addons.add(pcapdroid)
+
+                # MagicBox member rewriter (built-in, always on)
+                try:
+                    magicbox = MagicBoxMember()
+                    master.addons.add(magicbox)
+                    print("[MagicBox] 内置 addon 已加载")
+                except Exception:
+                    print("[MagicBox] 加载失败")
+                    print(traceback.format_exc())
 
                 # JsInjector addon
                 if "Js Injector" in enabled_addons:
